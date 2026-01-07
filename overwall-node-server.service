@@ -1,0 +1,12 @@
+[Unit]
+Description=PHP Built-in Web Server
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/etc/overwall-node
+ExecStart=/usr/bin/php -S 0.0.0.0:8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
