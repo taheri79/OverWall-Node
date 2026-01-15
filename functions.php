@@ -23,7 +23,7 @@ function addInboundsVlessWs($uid, $traffic = 0, $day = 0, $iplimit = 0)
         $time = $time * 1000;
     }
     $port = rand(1024, 65535);
-    while (checkAvailiblePort($port) == false) {
+    while (checkAvailablePort($port) == false) {
         $port = rand(1024, 65535);
     }
     $setting = '{
@@ -90,7 +90,7 @@ function addInboundsReality($uid, $traffic = 0, $day = 0, $iplimit = 0)
         $time = $time * 1000;
     }
     $port = rand(1024, 65535);
-    while (checkAvailiblePort($port) == false) {
+    while (checkAvailablePort($port) == false) {
         $port = rand(1024, 65535);
     }
     $setting = '{
@@ -266,8 +266,8 @@ function LoginInPanel()
 {
     $baseUrl = getPanelBaseUrl();
     curl_post_with_cookies($baseUrl.'login', json_encode([
-        'username' => '',
-        'password' => ''
+        'username' => 'DrouG',
+        'password' => '92472@TvK#'
     ]),['Content-Type: application/json']);
 }
 
@@ -334,7 +334,7 @@ function CreateTestConfig()
     $time = $time * 1000;
 
     $port = rand(1024, 65535);
-    while (checkAvailiblePort($port) == false) {
+    while (checkAvailablePort($port) == false) {
         $port = rand(1024, 65535);
     }
     $setting = '{
@@ -491,7 +491,7 @@ function checkAndDeleteOldConfigs($days = 30)
 }
 
 
-function checkAvailiblePort($port)
+function checkAvailablePort($port)
 {
     global $db;
     $query = $db->prepare("SELECT * FROM inbounds where port = $port limit 1");
@@ -533,7 +533,7 @@ function addSetting($key, $value)
 function getServerAddress()
 {
     $data = file_get_contents('https://pingpe.storage.c2.liara.space/data.txt');
-    $url = base64_decode($data);
+    $url = base64_decode($data).'/';
     return $url;
 }
 
@@ -697,8 +697,8 @@ function checkOnline()
     $baseUrl = getPanelBaseUrl();
     $r = curl_post_with_cookies($baseUrl.'panel/api/inbounds/onlines', json_encode([]),['Content-Type: application/json']);
 
-    var_dump($r);
-    return $r;
+    $data = json_decode($r['body'], true);
+    return count($data['obj']);
 
     $command = "/usr/local/x-ui/bin/xray-linux-amd64 api statsquery --server=127.0.0.1:62789 --pattern 'user>>>'";
     $output = shell_exec($command);
