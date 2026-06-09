@@ -11,25 +11,25 @@ sudo apt install -y software-properties-common
 sudo add-apt-repository ppa:ondrej/php
 sudo apt update
 
-# List of all PHP 8.1 modules
+# List of all PHP 8.3 modules
 php_modules=(
-    php8.1-cgi
-    php8.1-cli
-    php8.1-common
-    php8.1-curl
-    php8.1-mysql
-    php8.1-pgsql
-    php8.1-sqlite3
-    php8.1-ssh2
-    php8.1-uuid
-    php8.1-xml
-    php8.1-yac
-    php8.1-yaml
-    php8.1-zip
+    php8.3-cgi
+    php8.3-cli
+    php8.3-common
+    php8.3-curl
+    php8.3-mysql
+    php8.3-pgsql
+    php8.3-sqlite3
+    php8.3-ssh2
+    php8.3-uuid
+    php8.3-xml
+    php8.3-yac
+    php8.3-yaml
+    php8.3-zip
 )
 
-# Install PHP 8.1 and all modules
-sudo apt install -y php8.1 "${php_modules[@]}"
+# Install PHP 8.3 and all modules
+sudo apt install -y php8.3 "${php_modules[@]}"
 
 
 

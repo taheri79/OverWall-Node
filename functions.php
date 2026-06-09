@@ -1,10 +1,10 @@
 <?php
 set_time_limit(0);
-if (DIRECTORY_SEPARATOR == '/'){
+//if (DIRECTORY_SEPARATOR == '/'){
     $dir = 'sqlite:/etc/x-ui/x-ui.db';
-}else{
-    $dir = 'sqlite:./x-ui.db';
-}
+//}else{
+//    $dir = 'sqlite:./x-ui.db';
+//}
 
 
 $db = new PDO($dir) or die("cannot open the database");
@@ -200,10 +200,11 @@ function addInboundsReality($uid, $traffic = 0, $day = 0, $iplimit = 0)
 function getPanelBaseUrl()
 {
     $host = getSetting('hostnameapp');
+    $host = '94.182.136.212';
     $webPort = getSetting('webPort');
     $webBasePath = getSetting('webBasePath');
 
-    return 'http://' . $host . ':' . $webPort . $webBasePath;
+    return 'https://' . $host . ':' . $webPort . $webBasePath;
 }
 
 function curl_post_with_cookies(
@@ -244,7 +245,10 @@ function curl_post_with_cookies(
 //        CURLOPT_SSL_VERIFYHOST  => 2,
 //        CURLOPT_SSL_VERIFYPEER  => true,
     ]);
-
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+//    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
     $response = curl_exec($ch);
 
     if ($response === false) {
@@ -265,14 +269,15 @@ function curl_post_with_cookies(
 function LoginInPanel()
 {
     $baseUrl = getPanelBaseUrl();
-    curl_post_with_cookies($baseUrl.'login', json_encode([
+    $r = curl_post_with_cookies($baseUrl.'login', json_encode([
         'username' => 'DrouG',
         'password' => '92472@TvK#'
     ]),['Content-Type: application/json']);
+    return $r;
 }
 
 
-function addClient($inbound_id, $uid, $traffic = 0, $day = 0, $iplimit = 0)
+function addClient($inbound_id, $uid, $traffic = 0, $day = 0, $iplimit = 0,$protocol = 'vlessws')
 {
     LoginInPanel();
     $baseUrl = getPanelBaseUrl();
@@ -299,6 +304,12 @@ function addClient($inbound_id, $uid, $traffic = 0, $day = 0, $iplimit = 0)
 }]}'
     ]),['Content-Type: application/json']);
 
+    if ($protocol == 'vlessws'){
+        $host = getSetting('hostnameapp');
+        $port = 443;
+        $config = "vless://$uid@$host:$port?type=ws&encryption=none&path=%2F&host=&security=tls&fp=chrome&alpn=h2%2Chttp%2F1.1%2Ch3&sni=$host";
+        return $config;
+    }
     return "vless://$uid@net-meli.plus-agency.sbs:80?type=xhttp&encryption=none&path=%2F&host=groverwalll.global.ssl.fastly.net&mode=auto&security=none";
 //    vless://695bd94add758@151.101.3.8:80?type=xhttp&encryption=none&path=%2F&host=groverwalll.global.ssl.fastly.net&mode=auto&security=none#germany-app-695bd94add758
 }
@@ -310,13 +321,25 @@ function DeleteClient($inbound_id,$uid){
     $query->execute();
     $config = $query->fetchObject();
 
+    LoginInPanel();
+    sleep(1);
     $baseUrl = getPanelBaseUrl();
     $r = curl_post_with_cookies($baseUrl."panel/api/inbounds/$inbound_id/delClient/$uid", json_encode([]),['Content-Type: application/json']);
+    $data = json_decode($r['body'], true);
+//    var_dump($data);
+    if($data['success']){
+        return json_encode([
+            'success'=>true,
+            'up' => round($config->up * 1.025),
+            'down' => round($config->down * 1.025)
+        ]);
+    }else{
+        return json_encode([
+            'success'=>false,
+            'reason'=>$data['msg']
+        ]);
+    }
 
-    return json_encode([
-        'up' => round($config->up * 1.025),
-        'down' => round($config->down * 1.025)
-    ]);
 }
 
 
@@ -509,7 +532,7 @@ function checkAvailablePort($port)
 function getSetting($key)
 {
     global $db;
-    $query = $db->prepare("SELECT * FROM settings where key = '$key' limit 1");
+    $query = $db->prepare("SELECT * FROM settings where key = '$key' order by id desc limit 1");
     $query->execute();
     $row = $query->fetchObject();
     return $row->value;
@@ -532,7 +555,8 @@ function addSetting($key, $value)
 
 function getServerAddress()
 {
-    $data = file_get_contents('https://pingpe.storage.c2.liara.space/data.txt');
+//    $data = file_get_contents('https://pingpe.storage.c2.liara.space/data.txt');
+    $data = file_get_contents('https://pingpe.s3.ir-thr-at1.arvanstorage.ir/data.txt');
     $url = base64_decode($data).'/';
     return $url;
 }
@@ -693,7 +717,7 @@ function addInboundViaApiReality($uid, $port, $traffic, $expiryTimestampMs, $ema
 function checkOnline()
 {
 
-    LoginInPanel();
+    $r = LoginInPanel();
     $baseUrl = getPanelBaseUrl();
     $r = curl_post_with_cookies($baseUrl.'panel/api/inbounds/onlines', json_encode([]),['Content-Type: application/json']);
 

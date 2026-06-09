@@ -9,6 +9,8 @@
         <option name="customName" value="new.test" />
       </sshConfig>
       <sshConfig authType="PASSWORD" host="5.75.206.0" id="ca60eeef-74c3-4ff6-9ac4-1f951d4f8b89" port="22" nameFormat="DESCRIPTIVE" username="root" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="193.151.158.223" id="d58dd8f5-c129-4f9c-b7ac-389f4c75a68b" port="22" nameFormat="DESCRIPTIVE" username="root" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="94.182.136.212" id="2d21f3c0-6799-463b-b551-aaa2e847f018" port="22" nameFormat="DESCRIPTIVE" username="root" useOpenSSHConfig="true" />
     </configs>
   </component>
 </project>

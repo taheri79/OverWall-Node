@@ -29,11 +29,15 @@ foreach ($clients as $client) {
     }
 }
 //var_dump(getServerAddress());
+//addSetting('servertokenapp','nF0GfvaASs76Nt0s');
+//var_dump(getSetting('servertokenapp'));
+//var_dump($stats);
 $ch = curl_init(getServerAddress() . 'api/updateStats');
 $payload = json_encode([
     'token' => getSetting('servertokenapp'),
     'stats' => $stats,
-    'onlines'=>checkOnline()
+//    'onlines'=>checkOnline()
+    'onlines'=>0
 ]);
 //    var_dump($payload);
 

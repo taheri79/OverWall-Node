@@ -11,4 +11,4 @@ $url = urlencode($url);
 $token = file_get_contents(getServerAddress()."api/addServer?url=$url&name=$name");
 addSetting('servertokenapp',$token);
 
-// php -f install.php http://uk.plus-agency.sbs:8000/ uk.plus-agency.sbs uk
+// php -f install.php http://oww.overwall.sbs:8000/ oww.overwall.sbs oww
